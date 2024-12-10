@@ -106,10 +106,6 @@ function populateColumns(columns) {
 }
 //funcao pra excluir a coluna
 
-
-
-
-
 //funcao pra criar task e salvar
 function fetchTasksByColumn(columnId) {
     const endpoint = `${API_BASE_URL}/TaskBoard_CS/rest/TaskBoard/TasksByColumnId?ColumnId=${columnId}`;
@@ -154,59 +150,7 @@ async function addTask(columnId) {
     }
 }
 
-// Função para enviar a tarefa para a API
-async function addTaskToColumn(columnId, taskTitle) {
-    // Obtém o objeto 'user' do localStorage e faz o parse
-    const user = JSON.parse(localStorage.getItem('user'));
 
-    // Verifica se o usuário e o id existem
-    if (!user || !user.id) {
-        console.error("Usuário não encontrado no localStorage.");
-        alert("Usuário não encontrado. Faça o login novamente.");
-        return;
-    }
-
-    const userId = user.id; // Acessa o ID do usuário
-    console.log("ID do usuário:", userId); // Verifique se o userId foi obtido corretamente
-
-    // Gerar um ID único para a tarefa
-    const taskId = Date.now(); // Exemplo de ID único baseado no timestamp
-
-    const taskData = {
-        "Id": taskId,
-        "ColumnId": columnId,
-        "Title": taskTitle,
-        "Description": "",
-        "IsActive": true,
-        "CreatedBy": userId,  // Usa o userId do localStorage
-        "UpdatedBy": userId,  // Usa o userId do localStorage
-    };
-
-    const url = "https://personal-ga2xwx9j.outsystemscloud.com/TaskBoard_CS/rest/TaskBoard/Task";
-
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(taskData),
-        });
-
-        console.log("Resposta da API:", response);  // Log da resposta da API para ver o status
-
-        if (!response.ok) {
-            const errorDetails = await response.text();  // Captura a resposta de erro em texto
-            console.error("Erro ao salvar a tarefa:", errorDetails);
-            alert("Erro ao salvar a tarefa. Detalhes: " + errorDetails);  // Mostra o erro no alert
-        } else {
-            const newTask = await response.json();
-            console.log("Tarefa salva com sucesso:", newTask);
-            // Aqui você pode adicionar a tarefa à interface também
-        }
-    } catch (error) {
-        console.error("Erro de rede:", error);
-        alert("Erro de rede. Verifique sua conexão ou o servidor da API.");
-    }
-}
 
 //funcao pra criar task e salvar //fim
 
@@ -391,16 +335,16 @@ async function createBoard() {
 
         if (!response.ok) {
             const errorDetails = await response.json();
-             console.error("Erro da API:", errorDetails); // Adicionado para mostrar os detalhes da resposta
+             
             throw new Error(`Erro ao criar a board: ${JSON.stringify(errorDetails)}`);
         }
 
         const board = await response.json();
-        console.log("Nova board criada:", board);
+        
         alert("Board criada com sucesso!");
     } catch (error) {
-        console.error("Erro ao criar board:", error);
-        alert("Erro ao criar a board. Veja o console para mais detalhes.");
+       
+        alert("Erro! Campo Nome deve ter ao menos 10 caractéres.");
     }
 }
 
@@ -409,29 +353,26 @@ createBoardButton.addEventListener('click', createBoard);
 
 
 // Função para buscar todas as tarefas
-async function getAllTasks() {
-    const url = "https://personal-ga2xwx9j.outsystemscloud.com/TaskBoard_CS/rest/TaskBoard/Task"; // URL corrigida para obter todas as tarefas
+
+async function fetchAllTasks() {
+    const url = "https://personal-ga2xwx9j.outsystemscloud.com/TaskBoard_CS/rest/TaskBoard/Task";
 
     try {
-        // Fazendo a requisição para a API
+        // Faz a requisição GET para buscar todas as tarefas
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(`Erro na requisição: ${response.status}`);
+            throw new Error(`Erro ao buscar tarefas: ${response.status}`);
         }
 
-        // Convertendo a resposta para JSON
+        // Converte a resposta para JSON
         const tasks = await response.json();
 
-        // Verificando se há tarefas e exibindo-as
-        if (tasks.length > 0) {
-            displayTasks(tasks);
-        } else {
-            document.getElementById("task-list").innerHTML = "Não há tarefas cadastradas.";
-        }
+        // Exibe as tarefas
+        displayTasks(tasks);
     } catch (error) {
-        console.error("Erro ao obter tarefas:", error);
-        document.getElementById("task-list").innerHTML = "Erro ao carregar as tarefas.";
+        console.error("Erro ao obter as tarefas:", error);
+        alert("Não foi possível carregar as tarefas. Verifique o console para mais detalhes.");
     }
 }
 
@@ -439,21 +380,29 @@ async function getAllTasks() {
 function displayTasks(tasks) {
     const taskListElement = document.getElementById("task-list");
 
-    // Limpa a lista de tarefas antes de adicionar as novas
-    taskListElement.innerHTML = '';
+    // Limpa a lista de tarefas
+    taskListElement.innerHTML = "";
 
-    // Iterando pelas tarefas e criando um item para cada uma
-    tasks.forEach(task => {
+    if (tasks.length === 0) {
+        taskListElement.innerHTML = "Nenhuma tarefa encontrada.";
+        return;
+    }
+
+    // Itera pelas tarefas e cria elementos HTML para exibi-las
+    tasks.forEach((task) => {
         const taskItem = document.createElement("div");
         taskItem.className = "task-item";
         taskItem.innerHTML = `
-            <h6>${task.Title}</h6>
-            <p>${task.Description || 'Sem descrição'}</p>
-            <p>Status: ${task.IsActive ? 'Ativa' : 'Inativa'}</p>
+            <h6>${task.Title || "Sem título"}</h6>
+            <p>${task.Description || "Sem descrição"}</p>
+            <p>Status: ${task.IsActive ? "Ativa" : "Inativa"}</p>
+            <p>Criada por: ${task.CreatedBy}</p>
+            <p>Última atualização por: ${task.UpdatedBy}</p>
         `;
         taskListElement.appendChild(taskItem);
     });
 }
 
-// Chama a função para carregar todas as tarefas
-getAllTasks();
+// Chamar a função ao carregar a página
+fetchAllTasks();
+

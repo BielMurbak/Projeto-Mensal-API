@@ -12,42 +12,38 @@
 
 <body>
 
-        <header class = "box-cabecalho">
-            <h1>Task Board</h1>
-    </header>
+    <header class = "box-cabecalho">
+    <h1>Task Board</h1>
+</header>
 
-        <nav class="box-interativa">
-            
+    <nav class="box-interativa">
+    <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="boardsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    Selecionar Board
+</button>
+    <ul class="dropdown-menu dropdown-scroll" id="boardsList" aria-labelledby="boardsDropdown">
+    </ul>
+    <button id="button">Criar Board</button>
+</div>
 
-                <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="boardsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                Selecionar Board
-                </button>
-                <ul class="dropdown-menu dropdown-scroll" id="boardsList" aria-labelledby="boardsDropdown">
-                </ul>
-    </div>
+    <div class = "box-direita">
+    <span id="userName"></span>
+    <button id="logoutButton">Sair</button>
+    <label for="darkmode-toggle" class="switch">
+    <input type="checkbox" id="darkmode-toggle">
+    <span class="slider round"></span>
+</label>
+</div>
 
-    <div>
-       
-        <button id="button">Criar Board</button>
-       
-            </div>
-                <div>
-                <span id="userName"></span>
-                <button id="logoutButton">Sair</button>
-                </div>
-                <div>
-                <label for="darkmode-toggle" class="switch">
-                <input type="checkbox" id="darkmode-toggle">
-                <span class="slider round"></span>
-                </label>
-                </div>
-    </nav>
+
+</nav>
+
+</div>
 
     <div class="container">
-      <h2 id="boardTitle">Título do Board</h2>
-      <div id="board" class="mt-4">Conteúdo do board</div>
-    </div>
+    <h2 id="boardTitle">Título do Board</h2>
+    <div id="board" class="mt-4">Conteúdo do board</div>
+</div>
 
     <button id="create-column">Criar Bloco de Tarefas</button>
     
